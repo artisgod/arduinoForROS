@@ -64,42 +64,12 @@ void doPID(SetPointInfo * p) {
   p->PrevInput = input;
 }
 
-const int adjustmentValue = 2; // ค่าที่ใช้ในการปรับเปลี่ยน
-const long TOLERANCE = 50; // ค่าความแตกต่างที่อนุญาต
-const long desiredSpeed = 100; // ความเร็วที่ต้องการ
-
 /* Read the encoder values and call the PID routine */
 void updatePID() {
 
   /* Read the encoders */
   leftPID.Encoder = readEncoder(LEFT);
   rightPID.Encoder = readEncoder(RIGHT);
-  
-  long encoderDifference = leftPID.Encoder - rightPID.Encoder;
-
-  if (abs(encoderDifference) > TOLERANCE) {
-      if (encoderDifference > 0) {
-          // ล้อซ้ายหมุนเร็วเกินไป
-          if(leftPID.TargetTicksPerFrame < 0) {
-            leftPID.TargetTicksPerFrame += adjustmentValue;
-          }else{
-            leftPID.TargetTicksPerFrame -= adjustmentValue;
-          }
-      } else {
-          // ล้อขวาหมุนเร็วเกินไป
-          if(rightPID.TargetTicksPerFrame < 0) {
-            rightPID.TargetTicksPerFrame += adjustmentValue;
-          }else{
-            rightPID.TargetTicksPerFrame -= adjustmentValue;
-          }
-      }
-  }
-  if(leftPID.TargetTicksPerFrame < 0) {
-    leftPID.TargetTicksPerFrame += adjustmentValue; // สำหรับล้อซ้าย
-  }else{
-    leftPID.TargetTicksPerFrame -= adjustmentValue;
-  }
-  //rightPID.TargetTicksPerFrame = desiredSpeed; // สำหรับล้อขวา
   
   /* If we're not moving there is nothing more to do */
   if (!moving){
